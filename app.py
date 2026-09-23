@@ -1,12 +1,12 @@
 """
 Humanity-GenAI-World — MVP (Phase 1)
 
-現時点では、4タブ構想のうち以下3タブを実装している。
+現時点では、4タブ構想を実装している。
 - Identity & UBI（本人確認モック＋給付シミュレーション）
 - Meta Marche循環（買上・子ども食堂への配分案）
 - 源内 政策策定ルーム（AIとの政策壁打ちチャット）
 
-「住民ダッシュボード」は未実装（README.mdのロードマップ参照）。
+「住民ダッシュボード」は実装済み（Phase 1のセッション内ウォレット）。
 すべて概念実証段階のローカルモックであり、実測データではない。
 """
 import streamlit as st
@@ -14,6 +14,7 @@ import streamlit as st
 from core.allocation import Cafeteria, MarcheItem, allocate_item, create_log_entry
 from core.identity import IdentityLevel, WorldIDMock
 from core.policy_ai import GennaiCopilot
+from core.resident import append_ubi_used, cafeteria_allocation
 
 st.set_page_config(page_title="Humanity-GenAI-World", page_icon="🌏", layout="wide")
 
@@ -26,6 +27,8 @@ if "gennai" not in st.session_state:
     st.session_state.gennai = GennaiCopilot()
 if "base_ubi" not in st.session_state:
     st.session_state.base_ubi = 30_000
+if "resident_wallet" not in st.session_state:
+    st.session_state.resident_wallet = 0
 if "population" not in st.session_state:
     st.session_state.population = 1_000
 if "chat_history" not in st.session_state:
@@ -39,7 +42,7 @@ if "chat_history" not in st.session_state:
 st.title("🌏 Humanity-GenAI-World")
 st.caption("Humanity First. GenAI at the Center. World as the Horizon.（概念実証段階のローカルプロトタイプ）")
 
-tab1, tab2, tab3 = st.tabs(["👤 Identity & UBI", "🥕 Metaマルシェ循環", "🧠 源内 政策策定ルーム"])
+tab1, tab2, tab3, tab4 = st.tabs(["👤 Identity & UBI", "🥕 Metaマルシェ循環", "🧠 源内 政策策定ルーム", "🏠 住民ダッシュボード"])
 
 # ── Tab 1: Identity & UBI ────────────────────────────────────────
 with tab1:
@@ -117,6 +120,95 @@ with tab2:
         )
     else:
         st.caption("まだ記帳はありません。")
+
+# ── Tab 4: 住民ダッシュボード ─────────────────────────────────
+with tab4:
+    st.subheader("🏠 住民ダッシュボード")
+    st.caption("Tab 1の本人確認・UBI計算と、Tab 2の配分記帳をそのまま参照します。新しいモックデータは作りません。")
+
+    identity = st.session_state.identity
+    personal_ubi = identity.monthly_ubi(st.session_state.base_ubi)
+
+    st.subheader("本人確認")
+    st.write(f"現在の認証レベル：**{identity.level.value}**")
+
+    st.subheader("UBIウォレット")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("今月の受給試算額", f"¥{personal_ubi:,}")
+    with col2:
+        st.metric("現在のウォレット残高", f"¥{st.session_state.resident_wallet:,}")
+
+    if st.button("今月分を受け取る", key="resident_receive_ubi"):
+        st.session_state.resident_wallet += personal_ubi
+        st.success(f"¥{personal_ubi:,}をウォレット残高に加算しました。")
+
+    st.divider()
+    st.subheader("近隣の子ども食堂メニュー（配分記帳から表示）")
+    cafeteria_names = ["子ども食堂A", "子ども食堂B", "子ども食堂C"]
+    selected_cafeteria = st.selectbox(
+        "利用する子ども食堂",
+        options=cafeteria_names,
+        key="resident_cafeteria",
+    )
+    menu_rows = cafeteria_allocation(st.session_state.ledger, selected_cafeteria)
+    if menu_rows:
+        allocation = menu_rows[0]
+        allocation_item = next(
+            (
+                entry.details.get("item")
+                for entry in reversed(st.session_state.ledger)
+                if getattr(entry, "action_type", None) == "ALLOCATION_PROPOSED"
+            ),
+            "配分品目",
+        )
+        st.write(f"**{allocation_item}**：{allocation.get('quantity_kg', 0)}kg（配分比率 {allocation.get('ratio', 0):.0%}）")
+        st.caption("※ ここに表示しているのは、Tab 2で記録された配分案です。")
+    else:
+        st.info("まだ本日の配分データはありません。")
+
+    st.divider()
+    st.subheader("食堂を利用する（UBIを使う）")
+    use_amount = st.number_input(
+        "利用額（円）",
+        min_value=0,
+        max_value=max(st.session_state.resident_wallet, 0),
+        value=0,
+        step=500,
+        key="resident_use_amount",
+    )
+    if st.button("食堂で使う", key="resident_use_ubi"):
+        if use_amount <= 0:
+            st.warning("利用額を入力してください。")
+        elif use_amount > st.session_state.resident_wallet:
+            st.warning("ウォレット残高を超える利用はできません。")
+        else:
+            st.session_state.resident_wallet -= int(use_amount)
+            append_ubi_used(
+                st.session_state.ledger,
+                amount_yen=int(use_amount),
+                cafeteria_name=selected_cafeteria,
+            )
+            st.success(f"¥{int(use_amount):,}を{selected_cafeteria}で利用し、ledgerに記帳しました。")
+
+    st.divider()
+    st.subheader("住民利用の記帳")
+    used_entries = [
+        e for e in st.session_state.ledger
+        if getattr(e, "action_type", None) == "UBI_USED"
+    ]
+    if used_entries:
+        st.table([
+            {
+                "時刻": e.timestamp,
+                "種別": e.action_type,
+                "利用額(円)": e.details.get("amount_yen"),
+                "子ども食堂": e.details.get("cafeteria"),
+            }
+            for e in used_entries
+        ])
+    else:
+        st.caption("まだUBI利用の記帳はありません。")
 
 # ── Tab 3: 源内 政策策定ルーム ────────────────────────────────
 with tab3:
