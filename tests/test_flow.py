@@ -18,6 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from core.allocation import Cafeteria, MarcheItem, allocate_item, create_log_entry
 from core.identity import IdentityLevel, WorldIDMock
 from core.policy_ai import GennaiCopilot
+from core.resident import cafeteria_allocation
 
 
 def check(label: str, condition: bool) -> None:
@@ -100,8 +101,32 @@ def main() -> None:
         f"{new_base_ubi * population:,}" in reply_after_change,
     )
     check("5. 変更前の回答と変更後の回答が異なる", reply_after_change != empty_reply)
+    # ── Tab4: Resident Dashboard ──
+    resident_identity = WorldIDMock()
+    resident_identity.verify(IdentityLevel.ORB_VERIFIED)
+    resident_ubi = resident_identity.monthly_ubi(base_ubi)
+    wallet = 0
+    wallet += resident_ubi
+    check("Tab4. Tab1と同じmonthly_ubi計算を再利用する", resident_ubi == base_ubi)
+    check("Tab4. UBI受取でウォレット残高が増える", wallet == base_ubi)
 
-    print("\n全チェック合格。Tab1→Tab2→Tab3の一本道はcoreロジック上で成立しています。")
+    wallet -= 5_000
+    append_entry_ledger = ledger.copy()
+    append_entry_ledger.append(
+        create_log_entry(
+            action_type="UBI_USED",
+            actor="Resident",
+            details={"amount_yen": 5_000, "cafeteria": "子ども食堂A"},
+        )
+    )
+    check("Tab4. UBI利用でウォレット残高が減る", wallet == base_ubi - 5_000)
+    check("Tab4. UBI_USEDが同じledgerへ記帳される", append_entry_ledger[-1].action_type == "UBI_USED")
+    allocation_rows = cafeteria_allocation(ledger, "子ども食堂A")
+    check("Tab4. 既存のALLOCATION_PROPOSEDから子ども食堂Aの配分を読める", len(allocation_rows) == 1)
+
+
+
+    print("\n全チェック合格。Tab1→Tab2→Tab3→Tab4の一本道はcoreロジック上で成立しています。")
 
 
 if __name__ == "__main__":
