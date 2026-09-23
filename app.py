@@ -29,6 +29,8 @@ if "base_ubi" not in st.session_state:
     st.session_state.base_ubi = 30_000
 if "resident_wallet" not in st.session_state:
     st.session_state.resident_wallet = 0
+if "resident_notice" not in st.session_state:
+    st.session_state.resident_notice = None
 if "population" not in st.session_state:
     st.session_state.population = 1_000
 if "chat_history" not in st.session_state:
@@ -129,6 +131,10 @@ with tab4:
     identity = st.session_state.identity
     personal_ubi = identity.monthly_ubi(st.session_state.base_ubi)
 
+    if st.session_state.resident_notice:
+        st.success(st.session_state.resident_notice)
+        st.session_state.resident_notice = None
+
     st.subheader("本人確認")
     st.write(f"現在の認証レベル：**{identity.level.value}**")
 
@@ -141,7 +147,8 @@ with tab4:
 
     if st.button("今月分を受け取る", key="resident_receive_ubi"):
         st.session_state.resident_wallet += personal_ubi
-        st.success(f"¥{personal_ubi:,}をウォレット残高に加算しました。")
+        st.session_state.resident_notice = f"¥{personal_ubi:,}をウォレット残高に加算しました。"
+        st.rerun()
 
     st.divider()
     st.subheader("近隣の子ども食堂メニュー（配分記帳から表示）")
@@ -189,7 +196,10 @@ with tab4:
                 amount_yen=int(use_amount),
                 cafeteria_name=selected_cafeteria,
             )
-            st.success(f"¥{int(use_amount):,}を{selected_cafeteria}で利用し、ledgerに記帳しました。")
+            st.session_state.resident_notice = (
+                f"¥{int(use_amount):,}を{selected_cafeteria}で利用し、ledgerに記帳しました。"
+            )
+            st.rerun()
 
     st.divider()
     st.subheader("住民利用の記帳")
