@@ -1,31 +1,42 @@
-# Humanity-GenAI-World
+# ヒューマニティ源内ワールド｜Humanity-GenAI-World
 
 **Humanity First. GenAI at the Center. World as the Horizon.**
 
-Humanity-GenAI-Worldは、住民の本人性・参加（Humanity）を起点に、ガバメントAI「源内（Gennai）」（GenAI）を介して、地域の食・支援・社会保障に関するプロトタイプ（World）をローカル環境で実験するオープンな開発プロジェクトです。
+> **政策を、まずローカルで試食する。**
 
-プロジェクトの背景にある思想については [VISION.md](./VISION.md) を参照してください。本ドキュメントでは、現在何を実装し、何を検証しようとしているかを示します。
+## このプロジェクトについて
 
----
+ヒューマニティ源内ワールド｜Humanity-GenAI-Worldは、住民の本人性と参加を起点に、ガバメントAI「源内」を介して、地域の食、支援、社会保障に関する政策プロトタイプをローカル環境で検証するオープン開発プロジェクトです。
 
-## 概要
+本プロジェクトの背景には、長期的な社会ビジョンの基盤構想である [OtonaShokudo-UBI-GenAI](https://github.com/SunVerdir/OtonaShokudo-UBI-GenAI) があります。大人食堂UBIが、人が生存の不安から解放され、地域に参加し、互いに支え合うための社会的な余白を構想するのに対し、本プロジェクトは、その社会を小さな実装として試すモジュールです。
 
-現在、以下の既存プロトタイプを接続し、地域資源の循環・配分・住民利用・台帳記録・政策シミュレーションを一連の流れとして検証することを目的としています。
+## Humanity → GenAI → World
 
-| 区分 | 内容 |
-|---|---|
-| **Humanity** | 本人性・参加（認証モック、住民参加、住民側の利用体験） |
-| **GenAI** | ガバメントAI「源内」による政策案の検討・情報整理・シミュレーション支援 |
-| **World** | Meta Marche・子ども食堂DAO・Sanpoyoshi Guardian・Otona Shokudo × UBI |
+- **Humanity**：本人性、尊厳、参加、人間の意思
+- **GenAI（源内）**：人間の意思を実装へつなぐ協働知。源内は、支援のAIドラえもんであり、人間の意思決定を支援するPolicy Copilotです。
+- **World**：地域で試され、制度へ育ち、世界へ広がる社会
 
-「World」は特定のプロジェクトに限定した概念ではなく、地域社会のプロトタイプ領域全般を指す、拡張可能な区分です。
+AIが政策を決めるのではありません。人間が「こうしたい」と意思を示し、源内とともに「どう試してみようか」を考え、地域で検証します。最終的な判断と承認は人間が行います。
 
-現在のローカルMVPでは、次の4タブを一つの画面で接続しています。
+## 現在のMVP
 
-1. **Identity & UBI** — 認証レベルとUBI条件のシミュレーション
-2. **Metaマルシェ循環** — 食材の買上げと子ども食堂への配分案生成
-3. **源内 政策策定ルーム** — 現在のUBI条件・ledgerを参照するPolicy Copilot
-4. **住民ダッシュボード** — UBI受取、ウォレット残高、食堂利用、利用記録の確認
+現在のローカルMVPでは、四つのタブを一つの政策シナリオとして接続しています。
+
+### Tab 1：Identity & UBI
+
+認証モックと認証レベルを設定し、ユニバーサル・ベーシックインカム（UBI）の条件をシミュレーションします。制度の前提を変更し、その影響を検討できます。
+
+### Tab 2：Metaマルシェ循環
+
+地域資源を自治体が買い上げる想定で、子ども食堂への配分案を生成します。配分案は人間が確認・承認することを前提とします。
+
+### Tab 3：源内 Policy Room
+
+記録されたUBI条件や配分結果を参照し、政策案の整理、シナリオ比較、質疑応答を支援します。源内は自律的な政策決定者ではなく、人間の意思決定を補助するPolicy Copilotです。
+
+### Tab 4：住民ダッシュボード
+
+UBIの受け取りをシミュレーションし、地域の子ども食堂などでの利用、ウォレット残高の変化、利用履歴を確認します。配分案や利用記録は簡易ledgerに記録されます。
 
 ## 現在のデータフロー
 
@@ -34,50 +45,48 @@ Identity & UBI
    ↓
 Metaマルシェ循環
    ↓
-ALLOCATION_PROPOSED（配分案）
+ALLOCATION_PROPOSED
    ↓
-ledger
-   ├─→ 源内 Policy Copilot
-   └─→ 住民ダッシュボード
-          ↓
-       UBI_USED（利用記録）
-          ↓
-       ledger
-          ↓
-     Human Decision
+簡易ledger ──→ 源内 Policy Copilot
+   ↓                 ↓
+住民ダッシュボード ← 人間の判断・承認
+   ↓
+UBI_USED
+   ↓
+簡易ledger
 ```
 
-## 構成コンポーネント
+## 実装状況
 
-このリポジトリは、以下の既存プロトタイプの技術資産を土台に、統合レイヤーを構築します。
+- 認証モックと認証レベルの設定
+- UBI条件シミュレーション
+- Metaマルシェから子ども食堂への配分案生成
+- 源内 Policy Copilot
+- 住民ダッシュボード
+- `ALLOCATION_PROPOSED` と `UBI_USED` の簡易ledger記録
+- タブ間のUBI条件、配分案、ウォレット状態の連携
+- Identity → UBI → 配分 → 源内 → 住民利用のcoreロジック検証
+- GitHub Actionsによるスモークテスト
 
-- **[kodomo-shokudo-dao-gennai](https://github.com/SunVerdir/kodomo-shokudo-dao-gennai)** — 子ども食堂DAO × Metaマルシェ。段階的本人確認と資金循環のプロトタイプ（Zenodo DOI: [10.5281/zenodo.22040861](https://doi.org/10.5281/zenodo.22040861)）
-- **[sanpoyoshi-guardian](https://github.com/SunVerdir/sanpoyoshi-guardian)** — Metaマルシェの出品を子ども食堂へ分配するAIエージェント（ADK + Firestore + Cloud Run、Human-in-the-loopの承認フロー実装済み）
-- **[OtonaShokudo-UBI-GenAI](https://github.com/SunVerdir/OtonaShokudo-UBI-GenAI)** — 大人食堂UBI政策シミュレーター（Streamlit / stlite、[ライブデモ](https://sunverdir.github.io/OtonaShokudo-UBI-GenAI/)）
+## 現在のMVPが示さないもの
 
-## 源内（Gennai）の位置づけ
+本リポジトリは、政策の実施、制度化、予算措置、実際の給付、実決済、本番の本人確認を示すものではありません。住民ダッシュボードのウォレット、UBI受け取り、食堂利用は、Streamlitのセッション状態と簡易ledgerによるシミュレーションです。
 
-源内は、政策判断を自律的に行うシステムではありません。政策案の検討、情報整理、シナリオ比較、シミュレーションなどを通じて、人間の意思決定を支援するAIインターフェース（Government AI / Policy Copilot）です。最終的な判断・承認は、常に人間（職員・住民・意思決定者）が行います。
+ゼロ知識証明、本番World ID、本番ウォレット、NFT、メタバース販売、実LLMによるエージェント連携、AIオーケストレーターの実運用、自治体との実証は、将来の検証対象です。これらを現在実装済みの機能と混同しないことを重要な説明原則とします。
 
-## 現在の実装状況
+## 動画作品
 
-本リポジトリでは、統合レイヤーの4タブMVPを実装しています。
+本プロジェクトを短時間で紹介する動画作品の正式名称は、次のとおりです。
 
-- [x] `core/identity.py`（World ID／Public Credentialモック）の実装
-- [x] `core/allocation.py`（Metaマルシェ→子ども食堂の配分案生成、簡易記帳）の実装
-- [x] `core/policy_ai.py`（源内のルールベースPolicy Copilot。UBI条件・直近の配分結果を踏まえて応答）の実装
-- [x] `core/resident.py`（住民ダッシュボード向けの配分読込・UBI利用記録）の実装
-- [x] Streamlit 4タブ（Identity & UBI／Metaマルシェ循環／源内 政策策定ルーム／住民ダッシュボード）のMVP実装
-- [x] `session_state`によるタブ間のUBI条件・配分案・ウォレット状態の連携
-- [x] `ALLOCATION_PROPOSED` と `UBI_USED` を同一ledgerへ記録する流れ
-- [x] `tests/test_flow.py` によるIdentity→UBI→配分→源内→住民利用のcoreロジック検証
-- [x] GitHub Actionsによるスモークテスト自動実行
-- [ ] `core/`の残り（payment・marketplace・dao・ubi・audit）の実装
-- [ ] `adapters/`（本番想定のWorld ID／World Money／本物の生成AI等への差し替え口）の実装
-- [ ] 実LLM・本番認証・実決済との接続検証
-- [ ] デモ動画の作成
+> **ヒューマニティ源内ワールド｜Humanity-GenAI-World**
 
-## ローカルでの動かし方
+動画では、VISIONの理念と将来像をすべて説明するのではなく、現在のMVPを画面で示しながら、次のメッセージを伝えます。
+
+> **AIが政策を決めるのではない。AIを使って、人間が政策を試す。**
+
+動画は、冒頭の「政策を、まずローカルで試食する。」から始まり、四つのタブ、データの流れ、人間による確認・承認、MVPと将来構想の境界を説明します。YouTube公開時には、3分未満の紹介動画として公開し、作品ページ、リポジトリ、VISION、READMEへの導線を説明欄に設ける予定です。
+
+## ローカルでの実行
 
 ```bash
 git clone https://github.com/SunVerdir/Humanity-GenAI-World.git
@@ -86,49 +95,16 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-起動すると、次の4タブが表示されます。
-
-- Identity & UBI
-- Metaマルシェ循環
-- 源内 政策策定ルーム
-- 住民ダッシュボード
-
-スモークテストは次のコマンドで実行できます。
+スモークテスト：
 
 ```bash
 python tests/test_flow.py
 ```
 
-## 想定デモシナリオ
+## References
 
-最終的なデモでは、機能を個別に説明するのではなく、一つの政策シナリオを最初から最後まで動かして見せます。
+- [VISION.md](./VISION.md)：理念・将来像・方法論
+- [OtonaShokudo-UBI-GenAI](https://github.com/SunVerdir/OtonaShokudo-UBI-GenAI)：長期的な社会ビジョンの基盤構想
+- [Heroes League 2026](https://heroes-league.net/2026/) ：動画応募要項
 
-1. Identity & UBIで認証レベルとUBI条件を確認する
-2. Metaマルシェで食材を選び、子ども食堂への配分案を生成する
-3. `ALLOCATION_PROPOSED` がledgerに記録されたことを確認する
-4. 源内に直近の配分案やUBI条件について質問する
-5. 住民ダッシュボードでUBIを受け取り、食堂で一部を利用する
-6. `UBI_USED` が同じledgerに記録され、ウォレット残高が減ることを確認する
-7. 人間が条件を変更し、次のシナリオを考える
-
-**「AIが政策を決める」のではなく、「AIを使って人間が政策を試してみる」**ことをデモの軸に置きます。
-
-## ロードマップ
-
-- **Phase 1（〜2026年11月9日）**：[ヒーローズ・オンラインリーグ2026](https://heroes-league.net/2026/)応募に向けたローカルプロトタイプ（Python/Streamlit）の実装、4タブMVPの整理、ProtoPedia登録、3分紹介動画の作成
-- **Phase 2（2026年11月）**：GENIAC-PRIZE 2026提案書・デモ動画への統合。大人食堂UBI政策提言の実現に向けたプロトタイプとしての位置づけを整理
-- **Phase 3（2027年〜）**：自治体実証データをもとにした政策提言（大人食堂UBI）への展開
-
-## このプロジェクトが示さないもの
-
-本リポジトリは、政策の実施・制度化・予算措置を示すものではなく、社会システムの設計仮説をローカル環境で検証するための実験的実装です。
-
-現在の住民ダッシュボードにおけるウォレット・UBI受取・食堂利用は、Streamlitのセッション状態と簡易ledgerを用いたシミュレーションです。実際の給付、決済、本人確認、自治体制度、政策効果を実証するものではありません。数値・人口・配分値は概念実証用のモック／仮モデルとして扱います。
-
-## ライセンス
-
-コード：MIT License（予定）
-
----
-
-*Humanity-GenAI-World は、菅野敦也（経営DXラボ CIO）による、AI駆動開発（Vibe Coding）を通じた地方創生AXの実験プロジェクトです。*
+*Developed by Atsunari Sugano / SunVerdir.*

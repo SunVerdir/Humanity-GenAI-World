@@ -1,4 +1,4 @@
-# VISION — Humanity-GenAI-World
+# VISION — ヒューマニティ源内ワールド｜Humanity-GenAI-World
 
 **Humanity First. GenAI at the Center. World as the Horizon.**  
 真の人間を起点に、生成AIを中心に、世界の未来を描く。
@@ -7,9 +7,9 @@
 
 AIの普及は、雇用の形、地域経済、行政の仕事、そして人が社会に参加する方法を変えつつあります。人口減少、東京一極集中、大規模災害への備えも重なるなかで、技術の進歩だけでは、人間が心豊かに生きられる社会は自動的には実現しません。
 
-**OtonaShokudo-UBI-GenAI（大人食堂UBI）**は、この問題意識から出発する政策構想です。ここでいうUBIは、単なる給付や消費の補填ではありません。人が生存の不安から解放され、地域に参加し、価値を生み、互いに支え合うための**社会的な余白**です。大人食堂UBIは、子ども食堂、Metaマルシェ、地域の相互扶助、透明な記録、そして人間を支援するAIを結び、心豊かな人間中心のSociety 5.0を構想します。
+**OtonaShokudo-UBI-GenAI（大人食堂UBI）**は、この問題意識から出発する長期的な社会ビジョンの基盤構想です。ここでいうUBIは、単なる給付や消費の補填ではありません。人が生存の不安から解放され、地域に参加し、価値を生み、互いに支え合うための**社会的な余白**です。大人食堂UBIは、子ども食堂、Metaマルシェ、地域の相互扶助、透明な記録、そして人間を支援するAIを結び、心豊かな人間中心のSociety 5.0を構想します。
 
-**Humanity-GenAI-World**は、その長期ビジョンをローカル環境で検証する大切な実装モジュールの一つです。大人食堂UBIが「どのような社会を実現したいか」を示す長期的な社会ビジョンの基盤構想であるなら、本プロジェクトは「その社会を、まず小さくどのように試せるか」を示します。
+**ヒューマニティ源内ワールド｜Humanity-GenAI-World**は、その長期ビジョンをローカル環境で検証する大切な実装モジュールの一つです。大人食堂UBIが「どのような社会を実現したいか」を示す基盤構想であるなら、本プロジェクトは「その社会を、まず小さくどのように試せるか」を示します。
 
 ## 中核フレーム：Humanity → GenAI → World
 
@@ -83,7 +83,7 @@ World
 
 このVISIONが示すのは、技術のための社会ではなく、人間の尊厳のための技術です。OtonaShokudo-UBI-GenAIを基盤に、Humanityを起点とし、源内を介して、Worldを地域から試作する。その過程をオープンに記録し、検証し、改善することで、心豊かな人間中心のSociety 5.0を次の世代へ手渡すことを目指します。
 
-*Humanity-GenAI-World は、菅野敦也（経営DXラボ CIO）による、AI駆動開発を通じた地方創生AXの実験プロジェクトです。*
+*ヒューマニティ源内ワールド｜Humanity-GenAI-World は、菅野敦也（経営DXラボ CIO）による、AI駆動開発を通じた地方創生AXの実験プロジェクトです。*
 
 ## References
 
@@ -93,7 +93,8 @@ World
 
 [3] https://note.com/society/n/na3aeff13d4d8 "元祖リバースメンターは、支援のAIドラえもん。"
 
-[4] https://github.com/SunVerdir/Humanity-GenAI-World "Humanity-GenAI-World リポジトリ"
+[4] https://github.com/SunVerdir/Humanity-GenAI-World "ヒューマニティ源内ワールド｜Humanity-GenAI-World リポジトリ"
+
 [5] https://raw.githubusercontent.com/SunVerdir/Humanity-GenAI-World/main/README.md "Humanity-GenAI-World README.md"
 
 [6] https://raw.githubusercontent.com/SunVerdir/Humanity-GenAI-World/main/VISION.md "Humanity-GenAI-World VISION.md"
